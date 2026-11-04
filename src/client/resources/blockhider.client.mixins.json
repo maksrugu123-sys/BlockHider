@@ -4,8 +4,7 @@
   "compatibilityLevel": "JAVA_25",
   "refmap": "blockhider.refmap.json",
   "client": [
-    "HiddenBlockModelMixin",
-    "SectionCompilerMixin",
+    "BlockStateRenderShapeMixin",
     "FluidRendererMixin"
   ],
   "injectors": {
