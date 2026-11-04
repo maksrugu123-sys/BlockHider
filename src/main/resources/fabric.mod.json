@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "blockhider",
+  "version": "${version}",
+  "name": "Block Hider",
+  "description": "Client-side hiding of common natural blocks and vanilla ores without changing collision or world data.",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["net.blockhider.client.BlockHiderClient"]
+  },
+  "mixins": [
+    {
+      "config": "blockhider.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.20.1",
+    "minecraft": "26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
