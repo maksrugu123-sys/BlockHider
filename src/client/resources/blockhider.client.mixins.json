@@ -3,7 +3,10 @@
   "package": "net.blockhider.client.mixin",
   "compatibilityLevel": "JAVA_25",
   "refmap": "blockhider.refmap.json",
-  "client": ["BlockStateRenderShapeMixin"],
+  "client": [
+    "BlockStateRenderShapeMixin",
+    "FluidRendererMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

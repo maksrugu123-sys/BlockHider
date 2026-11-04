@@ -2,9 +2,10 @@ package net.blockhider.client;
 
 import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 
-/** Default allow-list of block IDs whose models should not be rendered. */
+/** Default list of blocks whose visible geometry is hidden on the client. */
 public final class HiddenBlocks {
     private HiddenBlocks() {}
 
@@ -24,6 +25,15 @@ public final class HiddenBlocks {
         "minecraft:netherrack", "minecraft:basalt", "minecraft:polished_basalt",
         "minecraft:blackstone", "minecraft:polished_blackstone", "minecraft:end_stone",
         "minecraft:soul_sand", "minecraft:soul_soil",
+
+        // Ground cover and grass-like plants.
+        "minecraft:short_grass", "minecraft:tall_grass",
+        "minecraft:fern", "minecraft:large_fern", "minecraft:dead_bush",
+        "minecraft:seagrass", "minecraft:tall_seagrass",
+        "minecraft:kelp", "minecraft:kelp_plant",
+        "minecraft:vine", "minecraft:glow_lichen", "minecraft:leaf_litter",
+
+        // Ores.
         "minecraft:coal_ore", "minecraft:deepslate_coal_ore",
         "minecraft:iron_ore", "minecraft:deepslate_iron_ore",
         "minecraft:copper_ore", "minecraft:deepslate_copper_ore",
@@ -36,6 +46,11 @@ public final class HiddenBlocks {
     );
 
     public static boolean shouldHide(Block block) {
+        // The tag covers every vanilla leaf variant, including future trees, and modded leaves.
+        if (block.defaultBlockState().is(BlockTags.LEAVES)) {
+            return true;
+        }
+
         return HIDDEN_IDS.contains(BuiltInRegistries.BLOCK.getKey(block).toString());
     }
 }
