@@ -5,7 +5,9 @@
   "refmap": "blockhider.refmap.json",
   "client": [
     "BlockStateRenderShapeMixin",
-    "FluidRendererMixin"
+    "FluidRendererMixin",
+    "LevelExtractorMixin",
+    "BlockEntityRenderDispatcherMixin"
   ],
   "injectors": {
     "defaultRequire": 1

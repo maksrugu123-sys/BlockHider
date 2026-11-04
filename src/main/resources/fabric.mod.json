@@ -3,7 +3,7 @@
   "id": "blockhider",
   "version": "${version}",
   "name": "Block Hider",
-  "description": "Client-side hiding of common natural blocks and vanilla ores without changing collision or world data.",
+  "description": "Client-side visual filter: hides world blocks, fluids and non-player non-mob entities while keeping mobs, players, particles and the End Portal visible.",
   "environment": "client",
   "entrypoints": {
     "client": ["net.blockhider.client.BlockHiderClient"]
