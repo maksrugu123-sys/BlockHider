@@ -11,10 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/**
- * Water is emitted by the dedicated fluid renderer, not by a block model.
- * Cancel only water tessellation; lava and other fluids are left untouched.
- */
+/** Water uses a separate renderer, so it must be cancelled independently. */
 @Mixin(FluidRenderer.class)
 public abstract class FluidRendererMixin {
     @Inject(method = "tesselate", at = @At("HEAD"), cancellable = true, require = 1)
