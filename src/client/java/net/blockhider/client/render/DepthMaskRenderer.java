@@ -17,7 +17,7 @@ import com.mojang.renderpearl.api.pipeline.DepthStencilState;
 import com.mojang.renderpearl.api.pipeline.PrimitiveTopology;
 import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import com.mojang.renderpearl.api.textures.GpuTextureView;
-import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelTerrainRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -60,7 +60,7 @@ public final class DepthMaskRenderer {
         LevelRenderEvents.AFTER_OPAQUE_TERRAIN.register(DepthMaskRenderer::render);
     }
 
-    private static void render(LevelRenderContext context) {
+    private static void render(LevelTerrainRenderContext context) {
         Map<Long, int[]> sections = DepthMaskManager.snapshot();
         if (sections.isEmpty()) {
             return;
@@ -68,8 +68,8 @@ public final class DepthMaskRenderer {
 
         Minecraft client = Minecraft.getInstance();
         Vec3 camera = context.levelState().cameraRenderState.pos;
-        PoseStack matrices = context.poseStack();
-        matrices.pushPose();
+        PoseStack matrices = new PoseStack();
+        matrices.mulPose(context.levelState().cameraRenderState.orientation);
         matrices.translate(-camera.x, -camera.y, -camera.z);
 
         boolean drawStarted = false;
@@ -158,7 +158,7 @@ public final class DepthMaskRenderer {
         try (RenderPass pass = RenderSystem.getDevice()
             .createCommandEncoder()
             .createRenderPass(() -> "Block Hider invisible depth pass", colorTexture, Optional.empty(), depthTexture, OptionalDouble.empty())) {
-            pass.setPipeline(DEPTH_ONLY_PIPELINE);
+            pass.setPipeline(RenderSystem.getCompiledPipeline(DEPTH_ONLY_PIPELINE));
             RenderSystem.bindDefaultUniforms(pass);
             pass.setUniform("DynamicTransforms", dynamicTransforms);
             pass.setVertexBuffer(0, info.vertexBuffer().slice());
