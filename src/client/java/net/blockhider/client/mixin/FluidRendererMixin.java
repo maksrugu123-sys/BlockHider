@@ -1,5 +1,6 @@
 package net.blockhider.client.mixin;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.block.FluidRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,6 +23,10 @@ public abstract class FluidRendererMixin {
         FluidState fluidState,
         CallbackInfo ci
     ) {
-        ci.cancel();
+        // BlockShapeVisualizer restores fluids with static (non-animated) textures.
+        // Keep the original Block Hider behavior when that companion mod is absent.
+        if (!FabricLoader.getInstance().isModLoaded("blockshape")) {
+            ci.cancel();
+        }
     }
 }
