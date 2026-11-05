@@ -2,7 +2,7 @@ name: Build Block Hider
 
 on:
   push:
-    branches: [main]
+    branches: [main, compat/blockshape-fluid-rendering]
   workflow_dispatch:
 
 permissions:
