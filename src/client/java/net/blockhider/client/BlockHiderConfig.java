@@ -117,6 +117,9 @@ public final class BlockHiderConfig {
         if (state.is(Blocks.END_PORTAL)) return true;
         if (isPortal(state)) return showPortals;
         if (isFire(state)) return showFire;
+        // Potted plants and other plant block entities follow the Plants switch,
+        // not the general Special Models switch, to avoid orphaned plant models.
+        if (isPlant(state)) return showPlants;
         return showSpecialModels;
     }
 
