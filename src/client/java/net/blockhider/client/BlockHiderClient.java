@@ -49,7 +49,7 @@ public final class BlockHiderClient implements ClientModInitializer {
                 .then(ClientCommands.literal("on").executes(context ->
                         setCategory(context.getSource(), category, true)))
                 .then(ClientCommands.literal("off").executes(context ->
-                        setCategory(context.getSource(), category, false));
+                        setCategory(context.getSource(), category, false)));
     }
 
     private static int setCategory(
