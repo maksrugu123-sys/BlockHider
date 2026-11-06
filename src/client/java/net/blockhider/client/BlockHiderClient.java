@@ -81,6 +81,9 @@ public final class BlockHiderClient implements ClientModInitializer {
     }
 
     private static String state(BlockHiderConfig.Category category) {
+        if (category == BlockHiderConfig.Category.PORTALS) {
+            return BlockHiderConfig.portalStatus();
+        }
         return BlockHiderConfig.isEnabled(category) ? "ON" : "OFF";
     }
 

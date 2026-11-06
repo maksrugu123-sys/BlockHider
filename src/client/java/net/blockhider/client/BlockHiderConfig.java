@@ -29,6 +29,8 @@ public final class BlockHiderConfig {
 
     private static boolean showLiquids = FabricLoader.getInstance().isModLoaded("blockshape");
     private static boolean showPortals;
+    // Preserve the previous release behavior until the user changes portal settings.
+    private static boolean showEndPortal = true;
     private static boolean showFire;
     private static boolean showPlants;
     private static boolean showSpecialModels;
@@ -43,6 +45,7 @@ public final class BlockHiderConfig {
             properties.load(reader);
             showLiquids = readBoolean(properties, "showLiquids", showLiquids);
             showPortals = readBoolean(properties, "showPortals", showPortals);
+            showEndPortal = readBoolean(properties, "showEndPortal", showEndPortal);
             showFire = readBoolean(properties, "showFire", showFire);
             showPlants = readBoolean(properties, "showPlants", showPlants);
             showSpecialModels = readBoolean(properties, "showSpecialModels", showSpecialModels);
@@ -55,6 +58,7 @@ public final class BlockHiderConfig {
         Properties properties = new Properties();
         properties.setProperty("showLiquids", Boolean.toString(showLiquids));
         properties.setProperty("showPortals", Boolean.toString(showPortals));
+        properties.setProperty("showEndPortal", Boolean.toString(showEndPortal));
         properties.setProperty("showFire", Boolean.toString(showFire));
         properties.setProperty("showPlants", Boolean.toString(showPlants));
         properties.setProperty("showSpecialModels", Boolean.toString(showSpecialModels));
@@ -72,7 +76,7 @@ public final class BlockHiderConfig {
     public static boolean isEnabled(Category category) {
         return switch (category) {
             case LIQUIDS -> showLiquids;
-            case PORTALS -> showPortals;
+            case PORTALS -> showPortals || showEndPortal;
             case FIRE -> showFire;
             case PLANTS -> showPlants;
             case SPECIAL_MODELS -> showSpecialModels;
@@ -82,7 +86,10 @@ public final class BlockHiderConfig {
     public static void setEnabled(Category category, boolean enabled) {
         switch (category) {
             case LIQUIDS -> showLiquids = enabled;
-            case PORTALS -> showPortals = enabled;
+            case PORTALS -> {
+                showPortals = enabled;
+                showEndPortal = enabled;
+            }
             case FIRE -> showFire = enabled;
             case PLANTS -> showPlants = enabled;
             case SPECIAL_MODELS -> showSpecialModels = enabled;
@@ -93,6 +100,7 @@ public final class BlockHiderConfig {
     public static void reset() {
         showLiquids = FabricLoader.getInstance().isModLoaded("blockshape");
         showPortals = false;
+        showEndPortal = true;
         showFire = false;
         showPlants = false;
         showSpecialModels = false;
@@ -104,9 +112,9 @@ public final class BlockHiderConfig {
      * previous release. Other categories are independently opt-in.
      */
     public static boolean shouldShowBlock(BlockState state, RenderShape original) {
-        if (original == RenderShape.INVISIBLE) return true;
-        if (state.is(Blocks.END_PORTAL)) return true;
+        if (state.is(Blocks.END_PORTAL)) return showEndPortal;
         if (isPortal(state)) return showPortals;
+        if (original == RenderShape.INVISIBLE) return true;
         if (isFire(state)) return showFire;
         if (isPlant(state)) return showPlants;
         if (original == RenderShape.ENTITYBLOCK_ANIMATED) return showSpecialModels;
@@ -114,13 +122,18 @@ public final class BlockHiderConfig {
     }
 
     public static boolean shouldShowBlockEntity(BlockState state) {
-        if (state.is(Blocks.END_PORTAL)) return true;
+        if (state.is(Blocks.END_PORTAL)) return showEndPortal;
         if (isPortal(state)) return showPortals;
         if (isFire(state)) return showFire;
         // Potted plants and other plant block entities follow the Plants switch,
         // not the general Special Models switch, to avoid orphaned plant models.
         if (isPlant(state)) return showPlants;
         return showSpecialModels;
+    }
+
+    public static String portalStatus() {
+        if (showPortals) return "ON";
+        return showEndPortal ? "END ONLY" : "OFF";
     }
 
     public static boolean showLiquids() {
