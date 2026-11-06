@@ -3,6 +3,12 @@ package net.blockhider.client.mixin;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import net.blockhider.client.BlockHiderConfig;
+import net.minecraft.client.renderer.WeatherEffectRenderer;
+import net.minecraft.client.renderer.state.level.WeatherRenderState;
+import net.minecraft.world.phys.Vec3;
+
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.extract.LevelExtractor;
@@ -63,5 +69,31 @@ public abstract class LevelExtractorMixin {
                 return result;
             }
         };
+    }
+
+    /**
+     * Skip client-side rain/snow render-state extraction when weather visuals are disabled.
+     * World weather simulation remains unchanged.
+     */
+    @WrapWithCondition(
+        method = "extract",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/WeatherEffectRenderer;extractRenderState(Lnet/minecraft/client/multiplayer/ClientLevel;FLnet/minecraft/world/phys/Vec3;Lnet/minecraft/client/renderer/state/level/WeatherRenderState;)V"
+        ),
+        require = 1
+    )
+    private boolean blockhider$skipWeatherExtraction(
+            WeatherEffectRenderer renderer,
+            ClientLevel level,
+            float partialTicks,
+            Vec3 cameraPos,
+            WeatherRenderState renderState
+    ) {
+        if (!BlockHiderConfig.isEnabled(BlockHiderConfig.Category.WEATHER)) {
+            renderState.intensity = 0.0F;
+            return false;
+        }
+        return true;
     }
 }

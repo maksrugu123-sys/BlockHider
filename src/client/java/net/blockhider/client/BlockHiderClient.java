@@ -34,7 +34,8 @@ public final class BlockHiderClient implements ClientModInitializer {
                                 .then(categoryCommand("portals", BlockHiderConfig.Category.PORTALS))
                                 .then(categoryCommand("fire", BlockHiderConfig.Category.FIRE))
                                 .then(categoryCommand("plants", BlockHiderConfig.Category.PLANTS))
-                                .then(categoryCommand("special", BlockHiderConfig.Category.SPECIAL_MODELS)))
+                                .then(categoryCommand("special", BlockHiderConfig.Category.SPECIAL_MODELS))
+                                .then(categoryCommand("weather", BlockHiderConfig.Category.WEATHER)))
                 )
         );
 
@@ -73,9 +74,10 @@ public final class BlockHiderClient implements ClientModInitializer {
         source.sendFeedback(Component.literal(
                 "[BlockHider] Растения: " + state(BlockHiderConfig.Category.PLANTS)
                         + " | Специальные модели: " + state(BlockHiderConfig.Category.SPECIAL_MODELS)
+                        + " | Погода: " + state(BlockHiderConfig.Category.WEATHER)
         ));
         source.sendFeedback(Component.literal(
-                "[BlockHider] /bhider category <liquids|portals|fire|plants|special> <on|off> | /bhider reset"
+                "[BlockHider] /bhider category <liquids|portals|fire|plants|special|weather> <on|off> | /bhider reset"
         ));
         return 1;
     }
@@ -94,6 +96,7 @@ public final class BlockHiderClient implements ClientModInitializer {
             case FIRE -> "Огонь";
             case PLANTS -> "Растения";
             case SPECIAL_MODELS -> "Специальные модели";
+            case WEATHER -> "Погода";
         };
     }
 }

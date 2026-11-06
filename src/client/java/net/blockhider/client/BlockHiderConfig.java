@@ -22,7 +22,7 @@ import java.util.Properties;
  */
 public final class BlockHiderConfig {
     public enum Category {
-        LIQUIDS, PORTALS, FIRE, PLANTS, SPECIAL_MODELS
+        LIQUIDS, PORTALS, FIRE, PLANTS, SPECIAL_MODELS, WEATHER
     }
 
     private static final Path CONFIG_FILE = FabricLoader.getInstance().getConfigDir()
@@ -35,6 +35,8 @@ public final class BlockHiderConfig {
     private static boolean showFire;
     private static boolean showPlants;
     private static boolean showSpecialModels;
+    // Disabled by default to avoid rain/snow extraction and rendering overhead.
+    private static boolean showWeather;
 
     private BlockHiderConfig() {}
 
@@ -50,6 +52,7 @@ public final class BlockHiderConfig {
             showFire = readBoolean(properties, "showFire", showFire);
             showPlants = readBoolean(properties, "showPlants", showPlants);
             showSpecialModels = readBoolean(properties, "showSpecialModels", showSpecialModels);
+            showWeather = readBoolean(properties, "showWeather", showWeather);
         } catch (IOException | IllegalArgumentException exception) {
             BlockHiderClient.LOGGER.warn("Could not read Block Hider settings; using safe defaults", exception);
         }
@@ -63,6 +66,7 @@ public final class BlockHiderConfig {
         properties.setProperty("showFire", Boolean.toString(showFire));
         properties.setProperty("showPlants", Boolean.toString(showPlants));
         properties.setProperty("showSpecialModels", Boolean.toString(showSpecialModels));
+        properties.setProperty("showWeather", Boolean.toString(showWeather));
 
         try {
             Files.createDirectories(CONFIG_FILE.getParent());
@@ -92,6 +96,7 @@ public final class BlockHiderConfig {
             case FIRE -> showFire;
             case PLANTS -> showPlants;
             case SPECIAL_MODELS -> showSpecialModels;
+            case WEATHER -> showWeather;
         };
     }
 
@@ -105,9 +110,13 @@ public final class BlockHiderConfig {
             case FIRE -> showFire = enabled;
             case PLANTS -> showPlants = enabled;
             case SPECIAL_MODELS -> showSpecialModels = enabled;
+            case WEATHER -> showWeather = enabled;
         }
         save();
-        refreshWorldRendering();
+        // Weather changes do not alter chunk geometry; avoid a costly full rebuild.
+        if (category != Category.WEATHER) {
+            refreshWorldRendering();
+        }
     }
 
     public static void reset() {
@@ -117,6 +126,7 @@ public final class BlockHiderConfig {
         showFire = false;
         showPlants = false;
         showSpecialModels = false;
+        showWeather = false;
         save();
         refreshWorldRendering();
     }
