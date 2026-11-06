@@ -164,6 +164,7 @@ public final class BlockHiderConfig {
 
     private static boolean isPlant(BlockState state) {
         Block block = state.getBlock();
+        if (block instanceof net.minecraft.world.level.block.LiquidBlock) return false;
         return block instanceof BushBlock
                 || state.is(BlockTags.FLOWERS)
                 || state.is(BlockTags.LEAVES)
@@ -171,7 +172,10 @@ public final class BlockHiderConfig {
                 || state.is(BlockTags.SAPLINGS)
                 || state.is(BlockTags.CAVE_VINES)
                 || state.is(BlockTags.CORAL_PLANTS)
-                || state.is(BlockTags.FLOWER_POTS);
+                || state.is(BlockTags.FLOWER_POTS)
+                // Covers the 26.3 red shrub and shelf mushroom, plus tagged modded vegetation.
+                || state.is(BlockTags.REPLACEABLE_BY_TREES)
+                || state.is(BlockTags.REPLACEABLE_BY_MUSHROOMS);
     }
 
     private static boolean readBoolean(Properties properties, String key, boolean fallback) {
