@@ -131,7 +131,12 @@ public final class BlockHiderConfig {
         if (original == RenderShape.INVISIBLE) return true;
         if (isFire(state)) return showFire;
         if (isPlant(state)) return showPlants;
-        if (original == RenderShape.ENTITYBLOCK_ANIMATED) return showSpecialModels;
+        // Some block entities use an ordinary MODEL render shape (for example signs
+        // and decorated blocks), not ENTITYBLOCK_ANIMATED. Keep their base model
+        // and their block-entity renderer controlled by the same category.
+        if (state.hasBlockEntity() || original == RenderShape.ENTITYBLOCK_ANIMATED) {
+            return showSpecialModels;
+        }
         return false;
     }
 
