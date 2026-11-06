@@ -1,6 +1,7 @@
 package net.blockhider.client;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -73,6 +74,17 @@ public final class BlockHiderConfig {
         }
     }
 
+    /**
+     * Rebuild visible client chunk geometry after a category toggle. This is
+     * event-driven (only on settings changes), not a per-frame operation.
+     */
+    private static void refreshWorldRendering() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level != null) {
+            minecraft.levelExtractor.allChanged();
+        }
+    }
+
     public static boolean isEnabled(Category category) {
         return switch (category) {
             case LIQUIDS -> showLiquids;
@@ -95,6 +107,7 @@ public final class BlockHiderConfig {
             case SPECIAL_MODELS -> showSpecialModels = enabled;
         }
         save();
+        refreshWorldRendering();
     }
 
     public static void reset() {
@@ -105,6 +118,7 @@ public final class BlockHiderConfig {
         showPlants = false;
         showSpecialModels = false;
         save();
+        refreshWorldRendering();
     }
 
     /**
