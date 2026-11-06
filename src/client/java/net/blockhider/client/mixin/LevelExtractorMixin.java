@@ -1,7 +1,7 @@
 package net.blockhider.client.mixin;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -29,12 +29,39 @@ public abstract class LevelExtractorMixin {
         require = 1
     )
     private Iterable<Entity> blockhider$keepMobsPlayersAndDroppedItems(Iterable<Entity> entities) {
-        List<Entity> visible = new ArrayList<>();
-        for (Entity entity : entities) {
-            if (entity instanceof Mob || entity instanceof Player || entity instanceof ItemEntity) {
-                visible.add(entity);
+        // Filter lazily: this hook runs during world extraction every frame.
+        // Avoid copying all visible entities into a fresh ArrayList each frame.
+        return () -> new Iterator<>() {
+            private final Iterator<Entity> source = entities.iterator();
+            private Entity next;
+            private boolean prepared;
+
+            private void prepareNext() {
+                if (prepared) return;
+                while (source.hasNext()) {
+                    Entity candidate = source.next();
+                    if (candidate instanceof Mob || candidate instanceof Player || candidate instanceof ItemEntity) {
+                        next = candidate;
+                        prepared = true;
+                        return;
+                    }
+                }
             }
-        }
-        return visible;
+
+            @Override
+            public boolean hasNext() {
+                prepareNext();
+                return prepared;
+            }
+
+            @Override
+            public Entity next() {
+                if (!hasNext()) throw new NoSuchElementException();
+                Entity result = next;
+                next = null;
+                prepared = false;
+                return result;
+            }
+        };
     }
 }
