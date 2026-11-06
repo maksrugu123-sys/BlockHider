@@ -125,14 +125,11 @@ public final class BlockHiderConfig {
     }
 
     private static boolean isPortal(BlockState state) {
-        return state.is(Blocks.NETHER_PORTAL) || state.is(Blocks.END_GATEWAY);
+        return state.is(BlockTags.PORTALS) || state.is(Blocks.END_GATEWAY);
     }
 
     private static boolean isFire(BlockState state) {
-        return state.is(Blocks.FIRE)
-                || state.is(Blocks.SOUL_FIRE)
-                || state.is(Blocks.CAMPFIRE)
-                || state.is(Blocks.SOUL_CAMPFIRE);
+        return state.is(BlockTags.FIRE) || state.is(BlockTags.CAMPFIRES);
     }
 
     private static boolean isPlant(BlockState state) {
@@ -141,7 +138,10 @@ public final class BlockHiderConfig {
                 || state.is(BlockTags.FLOWERS)
                 || state.is(BlockTags.LEAVES)
                 || state.is(BlockTags.CROPS)
-                || state.is(BlockTags.SAPLINGS);
+                || state.is(BlockTags.SAPLINGS)
+                || state.is(BlockTags.CAVE_VINES)
+                || state.is(BlockTags.CORAL_PLANTS)
+                || state.is(BlockTags.FLOWER_POTS);
     }
 
     private static boolean readBoolean(Properties properties, String key, boolean fallback) {
